@@ -1,0 +1,8 @@
+# SystemBoost generated artifacts (produced by build-standalone.ps1)
+SystemBoost/SystemBoost-portable.zip
+SystemBoost/SystemBoost-Setup.exe
+
+# General
+*.log
+Thumbs.db
+Desktop.ini
