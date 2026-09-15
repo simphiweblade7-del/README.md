@@ -46,6 +46,18 @@ const initialLayers = [
   { id: 'shirt', name: 'Garment', type: 'Mockup', visible: true, locked: true },
 ]
 
+const fontOptions = [
+  { name: 'Neue Montreal', family: 'Arial, Helvetica, sans-serif', style: 'Modern sans' },
+  { name: 'Inter', family: 'Inter, Arial, sans-serif', style: 'Clean sans' },
+  { name: 'Georgia', family: 'Georgia, serif', style: 'Editorial serif' },
+  { name: 'Courier Prime', family: 'Courier New, monospace', style: 'Mono' },
+  { name: 'Impact', family: 'Impact, Haettenschweiler, sans-serif', style: 'Display' },
+  { name: 'Trebuchet', family: 'Trebuchet MS, sans-serif', style: 'Friendly sans' },
+  { name: 'Times New Roman', family: 'Times New Roman, serif', style: 'Classic serif' },
+]
+
+const shapeOptions = ['Circle', 'Square', 'Star', 'Badge']
+
 export default function Page() {
   const [activeTool, setActiveTool] = useState('select')
   const [selectedLayer, setSelectedLayer] = useState('mark')
@@ -54,6 +66,12 @@ export default function Page() {
   const [side, setSide] = useState<'Front' | 'Back'>('Front')
   const [zoom, setZoom] = useState(72)
   const [toast, setToast] = useState('')
+  const [wordmark, setWordmark] = useState('NORTHSTAR')
+  const [fontName, setFontName] = useState('Neue Montreal')
+  const [fontSize, setFontSize] = useState(9)
+  const [textColor, setTextColor] = useState('#f3f1ec')
+  const [showFontMenu, setShowFontMenu] = useState(false)
+  const [customFonts, setCustomFonts] = useState<string[]>([])
 
   const flash = (message: string) => {
     setToast(message)
@@ -130,7 +148,7 @@ export default function Page() {
                 <div className="hoodie-pocket" />
                 <div className="neck-line" />
                 <div className="logo-placement">
-                  {side === 'Front' ? <><div className="mountain-mark"><span /><span /><span /></div><div className="wordmark">NORTHSTAR</div></> : <div className="back-stamp">FIELD<br /><small>STUDY 01</small></div>}
+                  {side === 'Front' ? <><div className="mountain-mark"><span /><span /><span /></div><div className="wordmark" style={{ color: textColor, fontFamily: fontOptions.find((font) => font.name === fontName)?.family, fontSize: `${fontSize}px` }}>{wordmark || 'YOUR BRAND'}</div></> : <div className="back-stamp">FIELD<br /><small>STUDY 01</small></div>}
                 </div>
                 <div className="size-tag">M</div>
               </div>
@@ -180,9 +198,17 @@ export default function Page() {
             </section>
 
             <section className="inspector-section type-section">
-              <div className="section-heading"><span>Brand type</span><button className="collapse-button"><ChevronDown size={15} /></button></div>
-              <div className="font-row"><div><strong>Neue Montreal</strong><span>Medium / 16 px</span></div><ChevronDown size={15} /></div>
-              <div className="type-preview">NORTHSTAR</div>
+              <div className="section-heading"><span>Make it yours</span><button className="collapse-button"><ChevronDown size={15} /></button></div>
+              <label className="field-label" htmlFor="brand-text">Your text</label>
+              <input id="brand-text" className="text-input" value={wordmark} onChange={(event) => setWordmark(event.target.value)} placeholder="Type your brand name" />
+              <div className="field-label row-label"><span>Font</span><span>{fontOptions.length + customFonts.length} available</span></div>
+              <div className="font-picker">
+                <button className="font-row" onClick={() => setShowFontMenu((current) => !current)} aria-expanded={showFontMenu}><div><strong style={{ fontFamily: fontOptions.find((font) => font.name === fontName)?.family }}>{fontName}</strong><span>{fontOptions.find((font) => font.name === fontName)?.style ?? 'Custom font'}</span></div><ChevronDown size={15} /></button>
+                {showFontMenu && <div className="font-menu">{fontOptions.map((font) => <button key={font.name} onClick={() => { setFontName(font.name); setShowFontMenu(false) }}><strong style={{ fontFamily: font.family }}>{font.name}</strong><span>{font.style}</span></button>)}{customFonts.map((font) => <button key={font} onClick={() => { setFontName(font); setShowFontMenu(false) }}><strong>{font}</strong><span>Uploaded font</span></button>)}</div>}
+              </div>
+              <div className="type-controls"><label>Size<input type="number" min="4" max="48" value={fontSize} onChange={(event) => setFontSize(Number(event.target.value))} /></label><label>Color<input className="color-input" type="color" value={textColor} onChange={(event) => setTextColor(event.target.value)} /></label></div>
+              <label className="upload-font"><Plus size={14} /> Add your font<input type="file" accept=".woff,.woff2,.ttf,.otf" onChange={async (event) => { const file = event.target.files?.[0]; if (file) { const uploadedFont = new FontFace(file.name, `url(${URL.createObjectURL(file)})`); await uploadedFont.load(); document.fonts.add(uploadedFont); setCustomFonts((current) => [...current, file.name]); setFontName(file.name); flash(`${file.name} added to your fonts`) } }} /></label>
+              <div className="type-preview" style={{ fontFamily: fontOptions.find((font) => font.name === fontName)?.family, color: textColor }}>{wordmark || 'YOUR BRAND'}</div>
             </section>
           </div>
         </aside>
