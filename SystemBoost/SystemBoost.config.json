@@ -1,9 +1,0 @@
-{
-  "general": {
-    "allowRestorePoint": true
-  },
-  "services": {
-    "disableFax": false
-  },
-  "exclusions": []
-}

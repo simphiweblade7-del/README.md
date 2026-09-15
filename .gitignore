@@ -1,8 +1,15 @@
-# SystemBoost generated artifacts (produced by build-standalone.ps1)
-SystemBoost/SystemBoost-portable.zip
-SystemBoost/SystemBoost-Setup.exe
+# v0 sandbox internal files
+__v0_runtime_loader.js
+__v0_devtools.tsx
+__v0_jsx-dev-runtime.ts
+.snowflake/
+.v0-trash/
+.vercel/
 
-# General
-*.log
-Thumbs.db
-Desktop.ini
+# Environment variables
+.env*.local
+
+# Common ignores
+node_modules
+.next/
+.DS_Store
